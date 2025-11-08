@@ -51,6 +51,7 @@
 
             <!-- Search Bar -->
             <div class="search-bar">
+                <span class="search-icon">🔍</span>
                 <input 
                     type="text" 
                     id="searchInput" 
@@ -97,7 +98,12 @@
                             <td>
                                 <form th:action="@{/student/enroll}" method="post">
                                     <input type="hidden" name="courseId" th:value="${c.id}" />
-                                    <button type="submit" class="btn btn-enroll">Enroll</button>
+                                    <button 
+                                        type="submit" 
+                                        class="btn btn-enroll" 
+                                        th:data-course-id="${c.id}">
+                                        Enroll
+                                    </button>
                                 </form>
                             </td>
                         </tr>
@@ -106,7 +112,7 @@
             </div>
 
             <div id="noResults" class="empty-state" style="display: none;">
-                <div class="empty-state-icon"></div>
+                <div class="empty-state-icon">🔍</div>
                 <div class="empty-state-text">No courses found</div>
                 <p style="color: #999; font-size: 0.875rem;">Try adjusting your search terms</p>
             </div>
@@ -119,7 +125,7 @@
             </div>
 
             <div class="course-cards" id="registeredCourses">
-                <div th:each="sc : ${registrations}" class="course-card">
+                <div th:each="sc : ${registrations}" class="course-card" th:data-course-id="${sc.course.id}">
                     <div class="course-card-header">
                         <div>
                             <div class="course-name" th:text="${sc.course.name}"></div>
