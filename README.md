@@ -1,1 +1,2 @@
 Class registration system
+asdfg
