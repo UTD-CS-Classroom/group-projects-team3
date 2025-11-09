@@ -7,7 +7,7 @@ import java.util.*;
 @Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
