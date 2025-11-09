@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () =>
     const loginButton = document.getElementById("login_button");
     const emailInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
+    const message = document.getElementById("login_message");
 
     login_button.addEventListener("click", () =>
     {
@@ -24,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () =>
         }
         else
         {
-            alert("Invalid login credentials!");
+            message.textContent = "Invalid login credentials";
         }
     });
 });

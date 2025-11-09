@@ -88,3 +88,9 @@ h1 {
     color: rgb(255,255,255);
     font-size: 24px;
 }
+
+.login_message {
+    color: rgb(255,0,0);
+    font-size: 16px;
+    font-family: Arial, "Times New Roman", Verdana;
+}
