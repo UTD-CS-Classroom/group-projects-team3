@@ -2,6 +2,7 @@ package com.cs3354Team3.cs3354GroupProject.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.*;
 
 @Entity
 @Data
