@@ -35,6 +35,12 @@ h1 {
     border: 5px solid rgb(232,117,0);
 
     background-color: rgb(21,71,52);
+
+    text-decoration: none;
+}
+
+.container_box:hover {
+    cursor: pointer;
 }
 
 .log_in {
