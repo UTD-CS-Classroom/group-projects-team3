@@ -1,2 +1,2 @@
 Class registration system
-sdadsadsaasdasd
+sdadsadsaasdasdf
