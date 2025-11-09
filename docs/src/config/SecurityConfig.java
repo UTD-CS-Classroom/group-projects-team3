@@ -1,6 +1,6 @@
-package com.cs3354Team3.cs3354GroupProject.config;
+package config;
 
-import com.cs3354Team3.cs3354GroupProject.service.CustomUserDetailsService;
+import service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

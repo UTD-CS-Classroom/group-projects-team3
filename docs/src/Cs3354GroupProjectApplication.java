@@ -1,5 +1,3 @@
-package com.cs3354Team3.cs3354GroupProject;
-
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

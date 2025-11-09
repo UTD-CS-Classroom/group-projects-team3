@@ -1,4 +1,4 @@
-package com.cs3354Team3.cs3354GroupProject.entity;
+package entity;
 
 public enum Role {
     STUDENT,

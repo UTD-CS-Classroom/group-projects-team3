@@ -1,8 +1,8 @@
-package com.cs3354Team3.cs3354GroupProject.repository;
+package repository;
 
-import com.cs3354Team3.cs3354GroupProject.entity.StudentCourse;
-import com.cs3354Team3.cs3354GroupProject.entity.User;
-import com.cs3354Team3.cs3354GroupProject.entity.Course;
+import entity.StudentCourse;
+import entity.User;
+import entity.Course;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 

@@ -1,18 +1,18 @@
-package com.cs3354Team3.cs3354GroupProject.controller;
+package controller;
 
 
-import com.cs3354Team3.cs3354GroupProject.entity.Course;
-import com.cs3354Team3.cs3354GroupProject.entity.User;
-import com.cs3354Team3.cs3354GroupProject.repository.CourseRepository;
-import com.cs3354Team3.cs3354GroupProject.repository.UserRepository;
-import com.cs3354Team3.cs3354GroupProject.repository.StudentCourseRepository;
+import entity.Course;
+import entity.User;
+import repository.CourseRepository;
+import repository.UserRepository;
+import repository.StudentCourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import com.cs3354Team3.cs3354GroupProject.entity.StudentCourse;
+import entity.StudentCourse;
 import java.util.List;
 
 @Controller
