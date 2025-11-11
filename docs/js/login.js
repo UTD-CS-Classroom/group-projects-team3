@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () =>
         }
         else
         {
-            message.textContent = "Invalid login credentials";
+            message.textContent = "Email or password is incorrect";
         }
     });
 });
