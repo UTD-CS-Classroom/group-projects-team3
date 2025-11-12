@@ -25,7 +25,8 @@ document.addEventListener("DOMContentLoaded", () =>
         }
         else
         {
-            message.textContent = "Email or password is incorrect";
+            message.style.visibility = 'visible';
+            message.style.top = (loginButton.getBoundingClientRect().bottom + 20) + 'px';
         }
     });
 });
