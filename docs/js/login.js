@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () =>
         }
         else
         {
-            message.style.visibility = 'visible';
+            message.style.display = 'block';
             message.style.top = (loginButton.getBoundingClientRect().bottom + 20) + 'px';
         }
     });
