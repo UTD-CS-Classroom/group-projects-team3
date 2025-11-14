@@ -1,49 +1,79 @@
-<!--<h2>Create a Course</h2>
-<form th:action="@{/teacher/add-course}" th:object="${course}" method="post">
-    <label>Course Name:</label>
-    <input type="text" th:field="*{name}" required />
-    <br/>
-    <label>Description:</label>
-    <textarea th:field="*{description}"></textarea>
-    <br/>
-    <label>Credits:</label>
-    <input type="number" th:field="*{credits}" required />
-    <br/>
-    <button type="submit">Post Course</button>
-</form>
-<a th:href="@{/teacher/dashboard}">Back to Dashboard</a>-->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>Add Course</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Link to your CSS in static/css -->
+    <link rel="stylesheet" th:href="@{/css/add_course_style.css}">
 </head>
 <body>
-<h2>Add New Course</h2>
-<form th:action="@{/teacher/add-course}" th:object="${course}" method="post">
-    <label>Course Name:</label>
-    <input type="text" th:field="*{name}" required /><br/>
+<header class="header">
+    <div class="header-content">
+        <h1>University Portal <span>Teacher</span></h1>
+        <a th:href="@{/teacher/dashboard}" class="back-link">Back to Dashboard</a>
+    </div>
+</header>
 
-    <label>Description:</label>
-    <textarea th:field="*{description}" required></textarea><br/>
+<main class="container">
+    <section class="form-card">
+        <h2 class="form-title">Add New Course</h2>
 
-    <label>Credits:</label>
-    <input type="number" th:field="*{credits}" min="1" required /><br/>
+        <form th:action="@{/teacher/add-course}" th:object="${course}" method="post" class="course-form">
+            <div class="form-group">
+                <label for="name">Course Name</label>
+                <input id="name" type="text" th:field="*{name}" required>
+            </div>
 
-    <label>Days of the Week:</label><br/>
-    <input type="checkbox" th:field="*{daysOfWeek}" value="MONDAY"/> Mon
-    <input type="checkbox" th:field="*{daysOfWeek}" value="TUESDAY"/> Tue
-    <input type="checkbox" th:field="*{daysOfWeek}" value="WEDNESDAY"/> Wed
-    <input type="checkbox" th:field="*{daysOfWeek}" value="THURSDAY"/> Thu
-    <input type="checkbox" th:field="*{daysOfWeek}" value="FRIDAY"/> Fri<br/>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" th:field="*{description}" rows="3" required></textarea>
+            </div>
 
-    <label>Start Time:</label>
-    <input type="time" th:field="*{startTime}" required /><br/>
+            <div class="form-group">
+                <label for="credits">Credits</label>
+                <input id="credits" type="number" th:field="*{credits}" min="1" required>
+            </div>
 
-    <label>End Time:</label>
-    <input type="time" th:field="*{endTime}" required /><br/>
+            <div class="form-group">
+                <label>Days of the Week</label>
+                <div class="checkbox-row">
+                    <label class="checkbox-item">
+                        <input type="checkbox" th:field="*{daysOfWeek}" value="MONDAY"> Mon
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" th:field="*{daysOfWeek}" value="TUESDAY"> Tue
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" th:field="*{daysOfWeek}" value="WEDNESDAY"> Wed
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" th:field="*{daysOfWeek}" value="THURSDAY"> Thu
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" th:field="*{daysOfWeek}" value="FRIDAY"> Fri
+                    </label>
+                </div>
+            </div>
 
-    <button type="submit">Add Course</button>
-</form>
-<a th:href="@{/teacher/dashboard}">Back to Dashboard</a>
+            <div class="form-row">
+                <div class="form-group half">
+                    <label for="startTime">Start Time</label>
+                    <input id="startTime" type="time" th:field="*{startTime}" required>
+                </div>
+                <div class="form-group half">
+                    <label for="endTime">End Time</label>
+                    <input id="endTime" type="time" th:field="*{endTime}" required>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Add Course</button>
+                <a th:href="@{/teacher/dashboard}" class="btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </section>
+</main>
 </body>
 </html>
