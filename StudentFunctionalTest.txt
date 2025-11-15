@@ -1,0 +1,173 @@
+package com.cs3354Team3.cs3354GroupProject.system;
+
+import com.cs3354Team3.cs3354GroupProject.entity.Course;
+import com.cs3354Team3.cs3354GroupProject.entity.DayOfWeek; 
+import com.cs3354Team3.cs3354GroupProject.entity.Role;
+import com.cs3354Team3.cs3354GroupProject.entity.StudentCourse;
+import com.cs3354Team3.cs3354GroupProject.entity.User;
+import com.cs3354Team3.cs3354GroupProject.repository.CourseRepository;
+import com.cs3354Team3.cs3354GroupProject.repository.StudentCourseRepository;
+import com.cs3354Team3.cs3354GroupProject.repository.UserRepository;
+import com.cs3354Team3.cs3354GroupProject.service.CustomUserDetailsService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@AutoConfigureMockMvc
+class StudentFunctionalTest {
+
+    private static final String STUDENT_EMAIL = "test_student@utd.edu";
+    private static final Long COURSE_ID = 101L;
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    // --- MOCK SERVICE LAYER DEPENDENCIES ---
+    @MockBean
+    private CourseRepository courseRepo;
+
+    @MockBean
+    private StudentCourseRepository studentCourseRepo;
+
+    @MockBean
+    private UserRepository userRepo;
+
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
+
+    @MockBean
+    private CommandLineRunner commandLineRunner;
+
+    private User mockStudent;
+    private Course mockCourse;
+    private Course mockExistingCourse;
+
+
+    @BeforeEach
+    void setUp() {
+        // --- 1. SETUP MOCK DATA ---
+        mockStudent = new User(1L, STUDENT_EMAIL, "pass", Role.STUDENT);
+        mockCourse = new Course();
+        mockCourse.setId(COURSE_ID);
+        mockCourse.setName("CS 4348");
+        mockCourse.setCredits(3);
+        // FIX APPLIED HERE: DayOfWeek is now the correct entity type
+        mockCourse.setDaysOfWeek(Set.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY));
+        mockCourse.setStartTime(LocalTime.of(10, 0));
+        mockCourse.setEndTime(LocalTime.of(11, 30));
+
+        // Setup a course the student is ALREADY enrolled in, for credit checks
+        mockExistingCourse = new Course();
+        mockExistingCourse.setId(201L);
+        mockExistingCourse.setCredits(18);
+        mockExistingCourse.setDaysOfWeek(Set.of(DayOfWeek.TUESDAY));
+        mockExistingCourse.setStartTime(LocalTime.of(8, 0));
+        mockExistingCourse.setEndTime(LocalTime.of(9, 0));
+
+        StudentCourse existingRegistration = new StudentCourse();
+        existingRegistration.setCourse(mockExistingCourse);
+        existingRegistration.setStudent(mockStudent);
+
+        // --- 2. SETUP MOCK REPOSITORY BEHAVIOR for successful enrollment ---
+        when(userRepo.findByEmail(STUDENT_EMAIL)).thenReturn(Optional.of(mockStudent));
+        when(courseRepo.findById(COURSE_ID)).thenReturn(Optional.of(mockCourse));
+        // Mock the existing courses (18 credits total)
+        when(studentCourseRepo.findByStudent(mockStudent)).thenReturn(List.of(existingRegistration));
+    }
+
+
+    // -------------------------------------------------------------------------
+    // 1. FR#6 (Prerequisites) & FR#11 (Designated Time) - TESTS THAT MUST FAIL
+    // -------------------------------------------------------------------------
+
+    /**
+     * FR#6: System must check prerequisites before allowing registration.
+     * FAILING ASSERTION: Test asserts an error for missing prereqs, but logic will succeed.
+     */
+    @Test
+    @WithMockUser(username = STUDENT_EMAIL, roles = {"STUDENT"})
+    void testEnrollment_FailsByDesign_Prerequisites_FR6() throws Exception {
+        // This test will FAIL because the controller has no prerequisite check and will succeed.
+        mockMvc.perform(post("/student/enroll")
+                        .param("courseId", String.valueOf(COURSE_ID)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("error", "Prerequisites for CS 4348 not met.")); // <<-- THIS FAILS
+    }
+
+    /**
+     * FR#11: Students cannot register before their designated time.
+     * FAILING ASSERTION: Test asserts an error for premature registration, but logic will succeed.
+     */
+    @Test
+    @WithMockUser(username = STUDENT_EMAIL, roles = {"STUDENT"})
+    void testEnrollment_FailsByDesign_DesignatedTime_FR11() throws Exception {
+        // This test will FAIL because the controller has no time check and will succeed.
+        mockMvc.perform(post("/student/enroll")
+                        .param("courseId", String.valueOf(COURSE_ID)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("error", "Registration is not yet open for this time slot.")); // <<-- THIS FAILS
+    }
+
+    // -------------------------------------------------------------------------
+    // 2. FR#9 (Class Full) & FR#10 (Waitlist) - TESTS THAT MUST FAIL
+    // -------------------------------------------------------------------------
+
+    /**
+     * FR#10: Student should be waitlisted and notified if class is full (the ideal outcome).
+     * FAILING ASSERTION: Test asserts a waitlist message, but the controller will enroll successfully.
+     */
+    @Test
+    @WithMockUser(username = STUDENT_EMAIL, roles = {"STUDENT"})
+    void testEnrollment_FailsByDesign_Waitlist_FR10() throws Exception {
+        // This test will FAIL because the controller has no waitlist logic and will succeed with a normal enrollment.
+        mockMvc.perform(post("/student/enroll")
+                        .param("courseId", String.valueOf(COURSE_ID)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("success", "You have been added to the waitlist for CS 4348.")); // <<-- THIS FAILS
+    }
+
+
+    // -------------------------------------------------------------------------
+    // 3. FR#12 (Drop Deadline) - TEST THAT MUST FAIL
+    // -------------------------------------------------------------------------
+
+    /**
+     * FR#12: Students cannot drop classes after the deadline.
+     * FAILING ASSERTION: Test asserts an error for dropping after the deadline, but logic will succeed.
+     */
+    @Test
+    @WithMockUser(username = STUDENT_EMAIL, roles = {"STUDENT"})
+    void testUnenroll_FailsByDesign_AfterDeadline_FR12() throws Exception {
+        // Setup mocks for a student that IS enrolled in a course.
+        StudentCourse registration = new StudentCourse();
+        registration.setStudent(mockStudent);
+        registration.setCourse(mockCourse);
+
+        when(userRepo.findByEmail(STUDENT_EMAIL)).thenReturn(Optional.of(mockStudent));
+        when(studentCourseRepo.findByStudent(mockStudent)).thenReturn(List.of(registration));
+
+        // This test will FAIL because the controller has no deadline check and will successfully delete the enrollment.
+        mockMvc.perform(post("/student/unenroll")
+                        .param("courseId", String.valueOf(COURSE_ID)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("error", "The drop deadline for this course has passed.")); // <<-- THIS FAILS
+    }
+}
