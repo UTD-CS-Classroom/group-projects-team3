@@ -1,18 +1,9 @@
 package com.cs3354Team3.cs3354GroupProject.controller;
 
-import com.cs3354Team3.cs3354GroupProject.entity.Course;
-import com.cs3354Team3.cs3354GroupProject.entity.Role;
-import com.cs3354Team3.cs3354GroupProject.entity.StudentCourse;
-import com.cs3354Team3.cs3354GroupProject.entity.User;
+import com.cs3354Team3.cs3354GroupProject.entity.*;
 import com.cs3354Team3.cs3354GroupProject.repository.CourseRepository;
 import com.cs3354Team3.cs3354GroupProject.repository.StudentCourseRepository;
 import com.cs3354Team3.cs3354GroupProject.repository.UserRepository;
-
-// --- IMPORT CHANGES HERE ---
-import com.cs3354Team3.cs3354GroupProject.entity.DayOfWeek; // Use your project's DayOfWeek
-import java.util.Collections; // Import Collections for emptySet()
-// --- END IMPORT CHANGES ---
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -20,10 +11,11 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.ui.Model;
+import org.springframework.ui.Model; // <-- IMPORT
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalTime;
+import java.util.Collections; // <-- IMPORT
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -50,16 +42,15 @@ class AdminControllerTest {
     private RedirectAttributes redirectAttrs;
 
     @Mock
-    private Model model;
+    private Model model; // <-- ADDED MOCK FOR DASHBOARD TEST
 
     // --- Captors ---
     @Captor
-    private ArgumentCaptor<StudentCourse> studentCourseCaptor;
+    private ArgumentCaptor<StudentCourse> studentCourseCaptor; // <-- ADDED CAPTOR
 
     // --- Class Under Test ---
     @InjectMocks
     private AdminController adminController;
-
 
     // --- NEW TEST ---
     /**
@@ -69,6 +60,7 @@ class AdminControllerTest {
     @Test
     void testAdminDashboard() {
         // --- 1. ARRANGE ---
+        // Mock the data that the dashboard needs to load
         when(userRepo.findByRole(Role.STUDENT)).thenReturn(List.of(new User()));
         when(userRepo.findByRole(Role.TEACHER)).thenReturn(List.of(new User()));
         when(courseRepo.findAll()).thenReturn(List.of(new Course()));
@@ -78,6 +70,7 @@ class AdminControllerTest {
 
         // --- 3. ASSERT ---
         assertEquals("admin-dashboard", viewName);
+        // Verify all model attributes were added
         verify(model, times(1)).addAttribute(eq("students"), anyList());
         verify(model, times(1)).addAttribute(eq("teachers"), anyList());
         verify(model, times(1)).addAttribute(eq("courses"), anyList());
@@ -85,11 +78,9 @@ class AdminControllerTest {
         verify(model, times(1)).addAttribute(eq("days"), any());
     }
 
-
     /**
      * Requirement: Admin can create a new course and assign a teacher.
      * Links to: FR #13
-     * Covers: createCourse() "happy path"
      */
     @Test
     void testCreateCourse_Success() {
@@ -97,12 +88,7 @@ class AdminControllerTest {
         User teacher = new User(1L, "teacher@test.com", "pass", Role.TEACHER);
         Course newCourse = new Course();
         newCourse.setName("New CS Course");
-
-        // --- CHANGE HERE ---
-        // Use your project's DayOfWeek enum (assuming it has MONDAY)
         newCourse.setDaysOfWeek(Set.of(DayOfWeek.MONDAY));
-        // --- END CHANGE ---
-
         newCourse.setStartTime(LocalTime.of(9, 0));
         newCourse.setEndTime(LocalTime.of(10, 0));
 
@@ -126,7 +112,7 @@ class AdminControllerTest {
     @Test
     void testCreateCourse_Fails_InvalidTeacher() {
         // --- 1. ARRANGE ---
-        Course newCourse = new Course();
+        Course newCourse = new Course(); // Course details don't matter here
         when(userRepo.findById(anyLong())).thenReturn(Optional.empty());
 
         // --- 2. ACT ---
@@ -138,19 +124,18 @@ class AdminControllerTest {
         verify(redirectAttrs).addFlashAttribute("error", "Invalid teacher ID.");
     }
 
-
     /**
      * Requirement: Admin cannot create a course with invalid data.
      * Links to: FR #13 (Validation)
      * Covers: createCourse() "sad path" for null days
      */
     @Test
-    void testCreateCourse_Fails_When_TimesMissing() {
+    void testCreateCourse_Fails_When_DaysNull() {
         // --- 1. ARRANGE ---
         User teacher = new User(1L, "teacher@test.com", "pass", Role.TEACHER);
-        Course newCourse = new Course();
+        Course newCourse = new Course(); // Note: No times or days are set
         newCourse.setName("New CS Course");
-        newCourse.setDaysOfWeek(null);
+        newCourse.setDaysOfWeek(null); // Explicitly set to null for this test
 
         when(userRepo.findById(1L)).thenReturn(Optional.of(teacher));
 
@@ -174,11 +159,7 @@ class AdminControllerTest {
         User teacher = new User(1L, "teacher@test.com", "pass", Role.TEACHER);
         Course newCourse = new Course();
         newCourse.setName("New CS Course");
-
-        // --- CHANGE HERE ---
-        // Use Collections.emptySet() to avoid the Java type error
-        newCourse.setDaysOfWeek(Collections.emptySet());
-        // --- END CHANGE ---
+        newCourse.setDaysOfWeek(Collections.emptySet()); // Set to empty set
 
         when(userRepo.findById(1L)).thenReturn(Optional.of(teacher));
 
@@ -246,7 +227,6 @@ class AdminControllerTest {
     /**
      * Requirement: Admin can enroll a student in a course.
      * Links to: FR #14
-     * Covers: enrollStudent() "happy path"
      */
     @Test
     void testEnrollStudent_Success() {
@@ -264,7 +244,9 @@ class AdminControllerTest {
 
         // --- 3. ASSERT ---
         assertEquals("redirect:/admin/dashboard", viewName);
-        verify(studentCourseRepo, times(1)).save(studentCourseCaptor.capture());
+        // Verify save was called
+        verify(studentCourseRepo, times(1)).save(studentCourseCaptor.capture()); // Use captor
+        // Check that the correct data was saved
         assertEquals(student, studentCourseCaptor.getValue().getStudent());
         assertEquals(course, studentCourseCaptor.getValue().getCourse());
 
@@ -274,7 +256,6 @@ class AdminControllerTest {
     /**
      * Requirement: Admin cannot enroll a student who is already enrolled.
      * Links to: FR #14
-     * Covers: enrollStudent() "sad path" for duplicate enrollment
      */
     @Test
     void testEnrollStudent_Fails_When_AlreadyEnrolled() {
@@ -300,13 +281,33 @@ class AdminControllerTest {
     /**
      * Requirement: Admin cannot enroll a student if IDs are invalid.
      * Links to: FR #14 (Validation)
-     * Covers: enrollStudent() "sad path" for invalid ID
+     * Covers: enrollStudent() "sad path" for invalid student
      */
     @Test
-    void testEnrollStudent_Fails_InvalidIDs() {
+    void testEnrollStudent_Fails_InvalidStudent() {
         // --- 1. ARRANGE ---
         when(userRepo.findById(1L)).thenReturn(Optional.empty()); // Invalid student
         when(courseRepo.findById(10L)).thenReturn(Optional.of(new Course())); // Valid course
+
+        // --- 2. ACT ---
+        String viewName = adminController.enrollStudent(1L, 10L, redirectAttrs);
+
+        // --- 3. ASSERT ---
+        assertEquals("redirect:/admin/dashboard", viewName);
+        verify(studentCourseRepo, never()).save(any(StudentCourse.class));
+        verify(redirectAttrs).addFlashAttribute("error", "Invalid student or course ID.");
+    }
+
+    // --- NEW TEST ---
+    /**
+     * Covers: enrollStudent() "sad path" for invalid course.
+     * Missing Branch: || courseOpt.isEmpty()
+     */
+    @Test
+    void testEnrollStudent_Fails_InvalidCourse() {
+        // --- 1. ARRANGE ---
+        when(userRepo.findById(1L)).thenReturn(Optional.of(new User())); // Valid student
+        when(courseRepo.findById(10L)).thenReturn(Optional.empty()); // Invalid course
 
         // --- 2. ACT ---
         String viewName = adminController.enrollStudent(1L, 10L, redirectAttrs);
@@ -321,7 +322,6 @@ class AdminControllerTest {
     /**
      * Requirement: Admin can drop a student from a course.
      * Links to: FR #14
-     * Covers: unenrollStudent() "happy path"
      */
     @Test
     void testUnenrollStudent_Success() {
@@ -399,7 +399,6 @@ class AdminControllerTest {
     /**
      * Requirement: Admin can delete any course.
      * Links to: FR #14 (implied)
-     * Covers: deleteCourse() "happy path"
      */
     @Test
     void testDeleteCourse_Success() {
