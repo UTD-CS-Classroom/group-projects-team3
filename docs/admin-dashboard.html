@@ -1,421 +1,174 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="css/styles.css">
-    <title>Course Scheduler</title>
+    <title>Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- match your other pages: static/css/adminDashboard_style.css -->
+    <link rel="stylesheet" th:href="@{/css/adminDashboard_style.css}">
 </head>
 <body>
-<div class="container_page_top">
-    <div class="page_banner">
-        <h2>Dashboard</h2>
-        <div class="button">Log Out</div>
+
+<header class="header">
+    <div class="header-content">
+        <h1>University <span>Admin</span> Dashboard</h1>
+        <a th:href="@{/logout}" class="logout-btn">Logout</a>
     </div>
-    <div class="container_dashboard">
-        <div class="dropdown" tabindex="0">
-            <div class="dropdown_selected">Students</div>
-            <div class="dropdown_menu">
-                <div class="dropdown_item" data-target="students">Students</div>
-                <div class="dropdown_item" data-target="teachers">Teachers</div>
-                <div class="dropdown_item" data-target="courses">Courses</div>
+</header>
+
+<main class="container">
+
+    <!-- Flash Messages -->
+    <div th:if="${error}" class="alert alert-error">
+        ❌ <span th:text="${error}"></span>
+    </div>
+    <div th:if="${success}" class="alert alert-success">
+        ✅ <span th:text="${success}"></span>
+    </div>
+
+    <!-- Quick stats -->
+    <section class="section">
+        <div class="section-header">
+            <h2 class="section-title">Overview</h2>
+        </div>
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value" th:text="${#lists.size(teachers)}">0</div>
+                <div class="stat-label">Teachers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${#lists.size(students)}">0</div>
+                <div class="stat-label">Students</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${#lists.size(courses)}">0</div>
+                <div class="stat-label">Courses</div>
             </div>
         </div>
-        <div class="wrapper_console" id="students">
-            <div class="console_label">Student ID</div>
-            <div class="console_label">Name</div>
-            <div class="console_label">Email</div>
-            <div class="console_label">Credits</div>
+    </section>
 
-            <div class="console_content">abc000000</div>
-            <div class="console_content">Afirst Bmid Clast</div>
-            <div class="console_content">abc000000@uni.edu</div>
-            <div class="console_content">100</div>
-
-            <div class="console_content">bcd000001</div>
-            <div class="console_content">Bfirst Cmid Dlast</div>
-            <div class="console_content">bcd000001@uni.edu</div>
-            <div class="console_content">101</div>
-
-            <div class="console_content">cde000002</div>
-            <div class="console_content">Cfirst Dmid Elast</div>
-            <div class="console_content">cde000002@uni.edu</div>
-            <div class="console_content">102</div>
-
-            <div class="console_content">def000003</div>
-            <div class="console_content">Dfirst Emid Flast</div>
-            <div class="console_content">def000003@uni.edu</div>
-            <div class="console_content">103</div>
-
-            <div class="console_content">efg000004</div>
-            <div class="console_content">Efirst Fmid Glast</div>
-            <div class="console_content">efg000004@uni.edu</div>
-            <div class="console_content">104</div>
-
-            <div class="console_content">fgh000005</div>
-            <div class="console_content">Ffirst Gmid Hlast</div>
-            <div class="console_content">fgh000005@uni.edu</div>
-            <div class="console_content">105</div>
-
-            <div class="console_content">ghi000006</div>
-            <div class="console_content">Gfirst Hmid Ilast</div>
-            <div class="console_content">ghi000006@uni.edu</div>
-            <div class="console_content">106</div>
-
-            <div class="console_content">hij000007</div>
-            <div class="console_content">Hfirst Imid Jlast</div>
-            <div class="console_content">hij000007@uni.edu</div>
-            <div class="console_content">107</div>
-
-            <div class="console_content">ijk000008</div>
-            <div class="console_content">Ifirst Jmid Klast</div>
-            <div class="console_content">ijk000008@uni.edu</div>
-            <div class="console_content">108</div>
-
-            <div class="console_content">jkl000009</div>
-            <div class="console_content">Jfirst Kmid Llast</div>
-            <div class="console_content">jkl000009@uni.edu</div>
-            <div class="console_content">109</div>
-
-            <div class="console_content">klm000010</div>
-            <div class="console_content">Kfirst Lmid Mlast</div>
-            <div class="console_content">klm000010@uni.edu</div>
-            <div class="console_content">110</div>
-
-            <div class="console_content">lmn000011</div>
-            <div class="console_content">Lfirst Mmid Nlast</div>
-            <div class="console_content">lmn000011@uni.edu</div>
-            <div class="console_content">111</div>
-
-            <div class="console_content">mno000012</div>
-            <div class="console_content">Mfirst Nmid Olast</div>
-            <div class="console_content">mno000012@uni.edu</div>
-            <div class="console_content">112</div>
-
-            <div class="console_content">nop000013</div>
-            <div class="console_content">Nfirst Omid Plast</div>
-            <div class="console_content">nop000013@uni.edu</div>
-            <div class="console_content">113</div>
-
-            <div class="console_content">opq000014</div>
-            <div class="console_content">Ofirst Pmid Qlast</div>
-            <div class="console_content">opq000014@uni.edu</div>
-            <div class="console_content">114</div>
-
-            <div class="console_content">pqr000015</div>
-            <div class="console_content">Pfirst Qmid Rlast</div>
-            <div class="console_content">pqr000015@uni.edu</div>
-            <div class="console_content">115</div>
-
-            <div class="console_content">qrs000016</div>
-            <div class="console_content">Qfirst Rmid Slast</div>
-            <div class="console_content">qrs000016@uni.edu</div>
-            <div class="console_content">116</div>
-
-            <div class="console_content">rst000017</div>
-            <div class="console_content">Rfirst Smid Tlast</div>
-            <div class="console_content">rst000017@uni.edu</div>
-            <div class="console_content">117</div>
-
-            <div class="console_content">stu000018</div>
-            <div class="console_content">Sfirst Tmid Ulast</div>
-            <div class="console_content">stu000018@uni.edu</div>
-            <div class="console_content">118</div>
-
-            <div class="console_content">tuv000019</div>
-            <div class="console_content">Tfirst Umid Vlast</div>
-            <div class="console_content">tuv000019@uni.edu</div>
-            <div class="console_content">119</div>
-
-            <div class="console_content">uvw000020</div>
-            <div class="console_content">Ufirst Vmid Wlast</div>
-            <div class="console_content">uvw000020@uni.edu</div>
-            <div class="console_content">120</div>
-
-            <div class="console_content">vwx000021</div>
-            <div class="console_content">Vfirst Wmid Xlast</div>
-            <div class="console_content">vwx000021@uni.edu</div>
-            <div class="console_content">121</div>
-
-            <div class="console_content">wxy000022</div>
-            <div class="console_content">Wfirst Xmid Ylast</div>
-            <div class="console_content">wxy000022@uni.edu</div>
-            <div class="console_content">122</div>
-
-            <div class="console_content">xyz000023</div>
-            <div class="console_content">Xfirst Ymid Zlast</div>
-            <div class="console_content">xyz000023@uni.edu</div>
-            <div class="console_content">123</div>
-
-            <div class="console_content">yza000024</div>
-            <div class="console_content">Yfirst Zmid Alast</div>
-            <div class="console_content">yza000024@uni.edu</div>
-            <div class="console_content">124</div>
+    <!-- Users -->
+    <section class="section">
+        <div class="section-header">
+            <h2 class="section-title">Users</h2>
         </div>
 
-        <div class="wrapper_console" id="teachers" style="display: none;">
-            <div class="console_label">Teacher ID</div>
-            <div class="console_label">Name</div>
-            <div class="console_label">Email</div>
-            <div class="console_label">Credits</div>
+        <div class="two-column">
+            <div>
+                <h3 class="subheading">Teachers</h3>
+                <ul class="simple-list">
+                    <li th:each="t : ${teachers}" th:text="${t.email}"></li>
+                </ul>
+            </div>
 
-            <div class="console_content">abc000000</div>
-            <div class="console_content">Afirst Bmid Clast</div>
-            <div class="console_content">abc000000@uni.edu</div>
-            <div class="console_content">100</div>
+            <div>
+                <h3 class="subheading">Students</h3>
+                <ul class="simple-list">
+                    <li th:each="s : ${students}" th:text="${s.email}"></li>
+                </ul>
+            </div>
+        </div>
+    </section>
 
-            <div class="console_content">bcd000001</div>
-            <div class="console_content">Bfirst Cmid Dlast</div>
-            <div class="console_content">bcd000001@uni.edu</div>
-            <div class="console_content">101</div>
-
-            <div class="console_content">cde000002</div>
-            <div class="console_content">Cfirst Dmid Elast</div>
-            <div class="console_content">cde000002@uni.edu</div>
-            <div class="console_content">102</div>
-
-            <div class="console_content">def000003</div>
-            <div class="console_content">Dfirst Emid Flast</div>
-            <div class="console_content">def000003@uni.edu</div>
-            <div class="console_content">103</div>
-
-            <div class="console_content">efg000004</div>
-            <div class="console_content">Efirst Fmid Glast</div>
-            <div class="console_content">efg000004@uni.edu</div>
-            <div class="console_content">104</div>
-
-            <div class="console_content">fgh000005</div>
-            <div class="console_content">Ffirst Gmid Hlast</div>
-            <div class="console_content">fgh000005@uni.edu</div>
-            <div class="console_content">105</div>
-
-            <div class="console_content">ghi000006</div>
-            <div class="console_content">Gfirst Hmid Ilast</div>
-            <div class="console_content">ghi000006@uni.edu</div>
-            <div class="console_content">106</div>
-
-            <div class="console_content">hij000007</div>
-            <div class="console_content">Hfirst Imid Jlast</div>
-            <div class="console_content">hij000007@uni.edu</div>
-            <div class="console_content">107</div>
-
-            <div class="console_content">ijk000008</div>
-            <div class="console_content">Ifirst Jmid Klast</div>
-            <div class="console_content">ijk000008@uni.edu</div>
-            <div class="console_content">108</div>
-
-            <div class="console_content">jkl000009</div>
-            <div class="console_content">Jfirst Kmid Llast</div>
-            <div class="console_content">jkl000009@uni.edu</div>
-            <div class="console_content">109</div>
-
-            <div class="console_content">klm000010</div>
-            <div class="console_content">Kfirst Lmid Mlast</div>
-            <div class="console_content">klm000010@uni.edu</div>
-            <div class="console_content">110</div>
-
-            <div class="console_content">lmn000011</div>
-            <div class="console_content">Lfirst Mmid Nlast</div>
-            <div class="console_content">lmn000011@uni.edu</div>
-            <div class="console_content">111</div>
-
-            <div class="console_content">mno000012</div>
-            <div class="console_content">Mfirst Nmid Olast</div>
-            <div class="console_content">mno000012@uni.edu</div>
-            <div class="console_content">112</div>
-
-            <div class="console_content">nop000013</div>
-            <div class="console_content">Nfirst Omid Plast</div>
-            <div class="console_content">nop000013@uni.edu</div>
-            <div class="console_content">113</div>
-
-            <div class="console_content">opq000014</div>
-            <div class="console_content">Ofirst Pmid Qlast</div>
-            <div class="console_content">opq000014@uni.edu</div>
-            <div class="console_content">114</div>
-
-            <div class="console_content">pqr000015</div>
-            <div class="console_content">Pfirst Qmid Rlast</div>
-            <div class="console_content">pqr000015@uni.edu</div>
-            <div class="console_content">115</div>
-
-            <div class="console_content">qrs000016</div>
-            <div class="console_content">Qfirst Rmid Slast</div>
-            <div class="console_content">qrs000016@uni.edu</div>
-            <div class="console_content">116</div>
-
-            <div class="console_content">rst000017</div>
-            <div class="console_content">Rfirst Smid Tlast</div>
-            <div class="console_content">rst000017@uni.edu</div>
-            <div class="console_content">117</div>
-
-            <div class="console_content">stu000018</div>
-            <div class="console_content">Sfirst Tmid Ulast</div>
-            <div class="console_content">stu000018@uni.edu</div>
-            <div class="console_content">118</div>
-
-            <div class="console_content">tuv000019</div>
-            <div class="console_content">Tfirst Umid Vlast</div>
-            <div class="console_content">tuv000019@uni.edu</div>
-            <div class="console_content">119</div>
-
-            <div class="console_content">uvw000020</div>
-            <div class="console_content">Ufirst Vmid Wlast</div>
-            <div class="console_content">uvw000020@uni.edu</div>
-            <div class="console_content">120</div>
-
-            <div class="console_content">vwx000021</div>
-            <div class="console_content">Vfirst Wmid Xlast</div>
-            <div class="console_content">vwx000021@uni.edu</div>
-            <div class="console_content">121</div>
-
-            <div class="console_content">wxy000022</div>
-            <div class="console_content">Wfirst Xmid Ylast</div>
-            <div class="console_content">wxy000022@uni.edu</div>
-            <div class="console_content">122</div>
-
-            <div class="console_content">xyz000023</div>
-            <div class="console_content">Xfirst Ymid Zlast</div>
-            <div class="console_content">xyz000023@uni.edu</div>
-            <div class="console_content">123</div>
-
-            <div class="console_content">yza000024</div>
-            <div class="console_content">Yfirst Zmid Alast</div>
-            <div class="console_content">yza000024@uni.edu</div>
-            <div class="console_content">124</div>
+    <!-- Create Course -->
+    <section class="section">
+        <div class="section-header">
+            <h2 class="section-title">Create Course</h2>
         </div>
 
-        <div class="wrapper_console" id="courses" style="display: none;">
-            <div class="console_label">Course ID</div>
-            <div class="console_label">Name</div>
-            <div class="console_label">Section</div>
-            <div class="console_label">Credits</div>
+        <form th:action="@{/admin/create-course}" method="post"
+              th:object="${newCourse}" class="form-grid">
 
-            <div class="console_content">abc000000</div>
-            <div class="console_content">Afirst Bmid Clast</div>
-            <div class="console_content">abc000000@uni.edu</div>
-            <div class="console_content">100</div>
+            <div class="form-row">
+                <label for="name">Course Name</label>
+                <input id="name" type="text" th:field="*{name}" required>
+            </div>
 
-            <div class="console_content">bcd000001</div>
-            <div class="console_content">Bfirst Cmid Dlast</div>
-            <div class="console_content">bcd000001@uni.edu</div>
-            <div class="console_content">101</div>
+            <div class="form-row">
+                <label for="description">Description</label>
+                <textarea id="description" th:field="*{description}" rows="3"></textarea>
+            </div>
 
-            <div class="console_content">cde000002</div>
-            <div class="console_content">Cfirst Dmid Elast</div>
-            <div class="console_content">cde000002@uni.edu</div>
-            <div class="console_content">102</div>
+            <div class="form-row">
+                <label for="credits">Credits</label>
+                <input id="credits" type="number" th:field="*{credits}" min="1" max="6" required>
+            </div>
 
-            <div class="console_content">def000003</div>
-            <div class="console_content">Dfirst Emid Flast</div>
-            <div class="console_content">def000003@uni.edu</div>
-            <div class="console_content">103</div>
+            <div class="form-row">
+                <label>Meeting Days</label>
+                <div class="checkbox-group" th:each="d : ${T(java.time.DayOfWeek).values()}">
+                    <label class="checkbox-item">
+                        <input type="checkbox" th:field="*{daysOfWeek}" th:value="${d}">
+                        <span th:text="${d}"></span>
+                    </label>
+                </div>
+            </div>
 
-            <div class="console_content">efg000004</div>
-            <div class="console_content">Efirst Fmid Glast</div>
-            <div class="console_content">efg000004@uni.edu</div>
-            <div class="console_content">104</div>
+            <div class="form-row two-columns">
+                <div>
+                    <label for="startTime">Start Time</label>
+                    <input id="startTime" type="time" th:field="*{startTime}">
+                </div>
+                <div>
+                    <label for="endTime">End Time</label>
+                    <input id="endTime" type="time" th:field="*{endTime}">
+                </div>
+            </div>
 
-            <div class="console_content">fgh000005</div>
-            <div class="console_content">Ffirst Gmid Hlast</div>
-            <div class="console_content">fgh000005@uni.edu</div>
-            <div class="console_content">105</div>
+            <div class="form-row">
+                <label for="teacherId">Assign Teacher</label>
+                <select id="teacherId" name="teacherId" required>
+                    <option value="" disabled selected>Select a teacher</option>
+                    <option th:each="t : ${teachers}"
+                            th:value="${t.id}"
+                            th:text="${t.email}">
+                    </option>
+                </select>
+            </div>
 
-            <div class="console_content">ghi000006</div>
-            <div class="console_content">Gfirst Hmid Ilast</div>
-            <div class="console_content">ghi000006@uni.edu</div>
-            <div class="console_content">106</div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create Course</button>
+            </div>
+        </form>
+    </section>
 
-            <div class="console_content">hij000007</div>
-            <div class="console_content">Hfirst Imid Jlast</div>
-            <div class="console_content">hij000007@uni.edu</div>
-            <div class="console_content">107</div>
-
-            <div class="console_content">ijk000008</div>
-            <div class="console_content">Ifirst Jmid Klast</div>
-            <div class="console_content">ijk000008@uni.edu</div>
-            <div class="console_content">108</div>
-
-            <div class="console_content">jkl000009</div>
-            <div class="console_content">Jfirst Kmid Llast</div>
-            <div class="console_content">jkl000009@uni.edu</div>
-            <div class="console_content">109</div>
-
-            <div class="console_content">klm000010</div>
-            <div class="console_content">Kfirst Lmid Mlast</div>
-            <div class="console_content">klm000010@uni.edu</div>
-            <div class="console_content">110</div>
-
-            <div class="console_content">lmn000011</div>
-            <div class="console_content">Lfirst Mmid Nlast</div>
-            <div class="console_content">lmn000011@uni.edu</div>
-            <div class="console_content">111</div>
-
-            <div class="console_content">mno000012</div>
-            <div class="console_content">Mfirst Nmid Olast</div>
-            <div class="console_content">mno000012@uni.edu</div>
-            <div class="console_content">112</div>
-
-            <div class="console_content">nop000013</div>
-            <div class="console_content">Nfirst Omid Plast</div>
-            <div class="console_content">nop000013@uni.edu</div>
-            <div class="console_content">113</div>
-
-            <div class="console_content">opq000014</div>
-            <div class="console_content">Ofirst Pmid Qlast</div>
-            <div class="console_content">opq000014@uni.edu</div>
-            <div class="console_content">114</div>
-
-            <div class="console_content">pqr000015</div>
-            <div class="console_content">Pfirst Qmid Rlast</div>
-            <div class="console_content">pqr000015@uni.edu</div>
-            <div class="console_content">115</div>
-
-            <div class="console_content">qrs000016</div>
-            <div class="console_content">Qfirst Rmid Slast</div>
-            <div class="console_content">qrs000016@uni.edu</div>
-            <div class="console_content">116</div>
-
-            <div class="console_content">rst000017</div>
-            <div class="console_content">Rfirst Smid Tlast</div>
-            <div class="console_content">rst000017@uni.edu</div>
-            <div class="console_content">117</div>
-
-            <div class="console_content">stu000018</div>
-            <div class="console_content">Sfirst Tmid Ulast</div>
-            <div class="console_content">stu000018@uni.edu</div>
-            <div class="console_content">118</div>
-
-            <div class="console_content">tuv000019</div>
-            <div class="console_content">Tfirst Umid Vlast</div>
-            <div class="console_content">tuv000019@uni.edu</div>
-            <div class="console_content">119</div>
-
-            <div class="console_content">uvw000020</div>
-            <div class="console_content">Ufirst Vmid Wlast</div>
-            <div class="console_content">uvw000020@uni.edu</div>
-            <div class="console_content">120</div>
-
-            <div class="console_content">vwx000021</div>
-            <div class="console_content">Vfirst Wmid Xlast</div>
-            <div class="console_content">vwx000021@uni.edu</div>
-            <div class="console_content">121</div>
-
-            <div class="console_content">wxy000022</div>
-            <div class="console_content">Wfirst Xmid Ylast</div>
-            <div class="console_content">wxy000022@uni.edu</div>
-            <div class="console_content">122</div>
-
-            <div class="console_content">xyz000023</div>
-            <div class="console_content">Xfirst Ymid Zlast</div>
-            <div class="console_content">xyz000023@uni.edu</div>
-            <div class="console_content">123</div>
-
-            <div class="console_content">yza000024</div>
-            <div class="console_content">Yfirst Zmid Alast</div>
-            <div class="console_content">yza000024@uni.edu</div>
-            <div class="console_content">124</div>
+    <!-- Existing Courses -->
+    <section class="section">
+        <div class="section-header">
+            <h2 class="section-title">Existing Courses</h2>
         </div>
-    </div>
-</div>
+
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Teacher</th>
+                <th>Days</th>
+                <th>Time</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="c : ${courses}">
+                <td th:text="${c.name}"></td>
+                <td th:text="${c.teacher.email}"></td>
+                <td th:text="${#strings.arrayJoin(c.daysOfWeek.toArray(), ', ')}"></td>
+                <td th:text="|${c.startTime} - ${c.endTime}|"></td>
+                <td>
+                    <form th:action="@{/admin/delete-course}" method="post">
+                        <input type="hidden" name="courseId" th:value="${c.id}">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(courses)}">
+                <td colspan="5" class="empty-state">No courses created yet.</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+</main>
+
 </body>
 </html>
