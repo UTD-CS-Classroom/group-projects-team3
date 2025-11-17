@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-// Import the new required classes
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,8 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class RepositoryIntegrationTest {
 
-    // --- THE FIX (Moved to the correct place) ---
-    // This static nested class provides the missing bean to the test context.
+    // Provide missing BCryptPasswordEncoder bean for the test context
     @TestConfiguration
     static class TestConfig {
         @Bean
@@ -30,7 +28,6 @@ public class RepositoryIntegrationTest {
             return new BCryptPasswordEncoder();
         }
     }
-    // ---------------
 
     @Autowired
     private TestEntityManager entityManager;
@@ -58,16 +55,51 @@ public class RepositoryIntegrationTest {
         entityManager.persist(teacher1);
         entityManager.persist(teacher2);
 
-        Course course1 = new Course(null, "Course A", "...", 3, teacher1, Set.of(DayOfWeek.MONDAY), LocalTime.NOON, LocalTime.MIDNIGHT);
-        Course course2 = new Course(null, "Course B", "...", 3, teacher2, Set.of(DayOfWeek.TUESDAY), LocalTime.NOON, LocalTime.MIDNIGHT);
-        Course course3 = new Course(null, "Course C", "...", 3, teacher1, Set.of(DayOfWeek.FRIDAY), LocalTime.NOON, LocalTime.MIDNIGHT);
+        Course course1 = new Course(
+                null,
+                "Course A",
+                "...",
+                3,
+                teacher1,
+                Set.of(DayOfWeek.MONDAY),
+                LocalTime.NOON,
+                LocalTime.MIDNIGHT,
+                null,
+                null
+        );
+
+        Course course2 = new Course(
+                null,
+                "Course B",
+                "...",
+                3,
+                teacher2,
+                Set.of(DayOfWeek.TUESDAY),
+                LocalTime.NOON,
+                LocalTime.MIDNIGHT,
+                null,
+                null
+        );
+
+        Course course3 = new Course(
+                null,
+                "Course C",
+                "...",
+                3,
+                teacher1,
+                Set.of(DayOfWeek.FRIDAY),
+                LocalTime.NOON,
+                LocalTime.MIDNIGHT,
+                null,
+                null
+        );
+
         entityManager.persist(course1);
         entityManager.persist(course2);
         entityManager.persist(course3);
         entityManager.flush();
 
         // --- 2. ACT ---
-        // Find all courses for teacher1
         List<Course> teacher1Courses = courseRepo.findByTeacher(teacher1);
 
         // --- 3. ASSERT ---
@@ -89,7 +121,18 @@ public class RepositoryIntegrationTest {
         entityManager.persist(student1);
         entityManager.persist(student2);
 
-        Course course = new Course(null, "Course A", "...", 3, null, Set.of(DayOfWeek.MONDAY), LocalTime.NOON, LocalTime.MIDNIGHT);
+        Course course = new Course(
+                null,
+                "Course A",
+                "...",
+                3,
+                null,
+                Set.of(DayOfWeek.MONDAY),
+                LocalTime.NOON,
+                LocalTime.MIDNIGHT,
+                null,
+                null
+        );
         entityManager.persist(course);
 
         // Enroll student1 in the course
@@ -116,7 +159,19 @@ public class RepositoryIntegrationTest {
     void testCourse_SavesDaysOfWeekCorrectly() {
         // --- 1. ARRANGE ---
         Set<DayOfWeek> days = Set.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY);
-        Course course = new Course(null, "MWF Class", "...", 3, null, days, LocalTime.of(9, 0), LocalTime.of(10, 0));
+
+        Course course = new Course(
+                null,
+                "MWF Class",
+                "...",
+                3,
+                null,
+                days,
+                LocalTime.of(9, 0),
+                LocalTime.of(10, 0),
+                null,
+                null
+        );
 
         // --- 2. ACT ---
         entityManager.persist(course);
@@ -128,6 +183,7 @@ public class RepositoryIntegrationTest {
         // --- 3. ASSERT ---
         assertThat(found.getName()).isEqualTo("MWF Class");
         assertThat(found.getDaysOfWeek()).hasSize(3);
-        assertThat(found.getDaysOfWeek()).contains(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY);
+        assertThat(found.getDaysOfWeek())
+                .contains(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY);
     }
 }
