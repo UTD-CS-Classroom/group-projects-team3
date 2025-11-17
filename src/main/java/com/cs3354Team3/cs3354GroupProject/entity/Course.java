@@ -5,7 +5,8 @@ import lombok.*;
 import java.time.LocalTime;
 import java.util.Set;
 
-
+// Each course has its own courseID, name, description, credit amount, teacher who teaches the course,
+// and meeting date/time
 @Entity
 @Data
 @NoArgsConstructor

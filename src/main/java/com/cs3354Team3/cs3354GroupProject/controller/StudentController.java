@@ -29,6 +29,7 @@ public class StudentController {
     @Autowired
     private UserRepository userRepo;
 
+    // Send student user details such as id and current courses to front-end dashboard
     @GetMapping("/dashboard")
     public String studentDashboard(Model model, Authentication auth) {
         User student = userRepo.findByEmail(auth.getName()).orElseThrow();
@@ -40,25 +41,24 @@ public class StudentController {
         return "student-dashboard";
     }
 
+    // First checks that student and course are valid, then enrolls student in course if not already enrolled,
+    // if does not exceed credit limit, and does not conflict with current schedule
     @PostMapping("/enroll")
     public String enrollCourse(@RequestParam Long courseId, Authentication auth, RedirectAttributes redirectAttrs) {
         User student = userRepo.findByEmail(auth.getName()).orElseThrow();
         Course course = courseRepo.findById(courseId).orElseThrow();
 
         List<StudentCourse> enrolledCourses = studentCourseRepo.findByStudent(student);
-        int totalCredits = enrolledCourses.stream()
-                .mapToInt(sc -> sc.getCourse().getCredits())
-                .sum();
+        int totalCredits = enrolledCourses.stream().mapToInt(sc -> sc.getCourse().getCredits()).sum();
 
         // Check if already enrolled
-        boolean alreadyEnrolled = studentCourseRepo.findByStudent(student).stream()
-                .anyMatch(sc -> sc.getCourse().getId().equals(courseId));
-
+        boolean alreadyEnrolled = studentCourseRepo.findByStudent(student).stream().anyMatch(sc -> sc.getCourse().getId().equals(courseId));
         if (alreadyEnrolled) {
             redirectAttrs.addFlashAttribute("error", "You are already enrolled in this course.");
             return "redirect:/student/dashboard";
         }
 
+        // Check that enrolling in course does not exceed credit limit
         if (totalCredits + course.getCredits() > 20) {
             redirectAttrs.addFlashAttribute("error", "You cannot exceed 20 credits in total.");
             return "redirect:/student/dashboard";
@@ -67,7 +67,7 @@ public class StudentController {
         for (StudentCourse sc : enrolledCourses) {
             Course existingCourse = sc.getCourse();
 
-            // Check if any day overlaps
+            // Check if days overlap
             boolean dayOverlap = !existingCourse.getDaysOfWeek().stream()
                     .filter(day -> course.getDaysOfWeek().contains(day))
                     .toList().isEmpty();
@@ -82,6 +82,7 @@ public class StudentController {
             }
         }
 
+        // Enroll in course if course fits in schedule
         StudentCourse sc = new StudentCourse();
         sc.setStudent(student);
         sc.setCourse(course);
@@ -91,24 +92,18 @@ public class StudentController {
         return "redirect:/student/dashboard";
     }
 
+    // Check that student and course are valid and then unenroll
     @PostMapping("/unenroll")
-    public String unenrollCourse(@RequestParam Long courseId,
-                                 Authentication auth,
-                                 RedirectAttributes redirectAttrs) {
+    public String unenrollCourse(@RequestParam Long courseId, Authentication auth, RedirectAttributes redirectAttrs) {
         User student = userRepo.findByEmail(auth.getName()).orElseThrow();
-
-        // Find the student-course relationship
-        StudentCourse sc = studentCourseRepo.findByStudent(student).stream()
-                .filter(s -> s.getCourse().getId().equals(courseId))
-                .findFirst()
-                .orElse(null);
+        StudentCourse sc = studentCourseRepo.findByStudent(student).stream().filter(s -> s.getCourse().getId().equals(courseId)).findFirst().orElse(null);
 
         if (sc == null) {
             redirectAttrs.addFlashAttribute("error", "You are not enrolled in this course.");
             return "redirect:/student/dashboard";
         }
 
-        // Remove the enrollment
+        // Unenroll in course
         studentCourseRepo.delete(sc);
 
         redirectAttrs.addFlashAttribute("success", "Successfully unenrolled from " + sc.getCourse().getName() + ".");

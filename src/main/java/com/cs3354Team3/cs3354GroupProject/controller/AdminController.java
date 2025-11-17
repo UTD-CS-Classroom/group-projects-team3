@@ -1,15 +1,3 @@
-/*package com.cs3354Team3.cs3354GroupProject.controller;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-
-@Controller
-public class AdminController {
-    @GetMapping("/admin/dashboard")
-    public String adminDashboard() {
-        return "admin-dashboard";
-    }
-}*/
 package com.cs3354Team3.cs3354GroupProject.controller;
 
 import com.cs3354Team3.cs3354GroupProject.entity.Course;
@@ -43,7 +31,8 @@ public class AdminController {
     @Autowired
     private StudentCourseRepository studentCourseRepo;
 
-    // --- ADMIN DASHBOARD ---
+    // Listens for GET requests from front-end
+    // Sends information about students, teachers, and courses to admin-dashboard
     @GetMapping("/dashboard")
     public String adminDashboard(Model model) {
         List<User> students = userRepo.findByRole(Role.STUDENT);
@@ -59,18 +48,19 @@ public class AdminController {
         return "admin-dashboard";
     }
 
+    // Create a new course with assigned teacher and meeting time
+    // Sends course to university database
     @PostMapping("/create-course")
-    public String createCourse(@ModelAttribute Course newCourse,
-                               @RequestParam Long teacherId,
-                               RedirectAttributes redirectAttrs) {
+    public String createCourse(@ModelAttribute Course newCourse, @RequestParam Long teacherId, RedirectAttributes redirectAttrs) {
         Optional<User> teacherOpt = userRepo.findById(teacherId);
 
+        // Check that at least one teacher exists first
         if (teacherOpt.isEmpty()) {
             redirectAttrs.addFlashAttribute("error", "Invalid teacher ID.");
             return "redirect:/admin/dashboard";
         }
 
-        // Validation: days and times
+        // Validate date and time of course
         if (newCourse.getDaysOfWeek() == null || newCourse.getDaysOfWeek().isEmpty()
                 || newCourse.getStartTime() == null
                 || newCourse.getEndTime() == null) {
@@ -78,45 +68,37 @@ public class AdminController {
             return "redirect:/admin/dashboard";
         }
 
-        // Assign teacher
+        // Set teacher for course
         newCourse.setTeacher(teacherOpt.get());
-
-        // Save course
         courseRepo.save(newCourse);
 
         redirectAttrs.addFlashAttribute("success", "Course created successfully.");
         return "redirect:/admin/dashboard";
     }
 
-
-    // --- DELETE COURSE ---
+    // Unenroll all students from the course and then delete course
     @PostMapping("/delete-course")
-    public String deleteCourse(@RequestParam Long courseId,
-                               RedirectAttributes redirectAttrs) {
+    public String deleteCourse(@RequestParam Long courseId, RedirectAttributes redirectAttrs) {
         Optional<Course> courseOpt = courseRepo.findById(courseId);
         if (courseOpt.isEmpty()) {
             redirectAttrs.addFlashAttribute("error", "Course not found.");
             return "redirect:/admin/dashboard";
         }
-
         Course course = courseOpt.get();
 
-        // Delete related enrollments
+        // Unenroll all students in the course
         List<StudentCourse> enrollments = studentCourseRepo.findByCourse(course);
         studentCourseRepo.deleteAll(enrollments);
 
-        // Delete the course itself
+        // Delete course
         courseRepo.delete(course);
-
         redirectAttrs.addFlashAttribute("success", "Course deleted successfully.");
         return "redirect:/admin/dashboard";
     }
 
-    // --- ADD COURSE TO STUDENT SCHEDULE ---
+    // First checks that student and course are valid, then enrolls student in course if not already enrolled
     @PostMapping("/enroll-student")
-    public String enrollStudent(@RequestParam Long studentId,
-                                @RequestParam Long courseId,
-                                RedirectAttributes redirectAttrs) {
+    public String enrollStudent(@RequestParam Long studentId, @RequestParam Long courseId, RedirectAttributes redirectAttrs) {
         Optional<User> studentOpt = userRepo.findById(studentId);
         Optional<Course> courseOpt = courseRepo.findById(courseId);
 
@@ -128,15 +110,14 @@ public class AdminController {
         User student = studentOpt.get();
         Course course = courseOpt.get();
 
-        // Prevent duplicate enrollment
-        boolean alreadyEnrolled = studentCourseRepo.findByStudent(student).stream()
-                .anyMatch(sc -> sc.getCourse().getId().equals(courseId));
-
+        // Check if already enrolled
+        boolean alreadyEnrolled = studentCourseRepo.findByStudent(student).stream().anyMatch(sc -> sc.getCourse().getId().equals(courseId));
         if (alreadyEnrolled) {
             redirectAttrs.addFlashAttribute("error", "Student is already enrolled in this course.");
             return "redirect:/admin/dashboard";
         }
 
+        // If not yet enrolled, enroll student in course
         StudentCourse sc = new StudentCourse();
         sc.setStudent(student);
         sc.setCourse(course);
@@ -146,11 +127,9 @@ public class AdminController {
         return "redirect:/admin/dashboard";
     }
 
-    // --- DROP COURSE FROM STUDENT SCHEDULE ---
+    // Validate student and course and then drop course from students schedule
     @PostMapping("/unenroll-student")
-    public String unenrollStudent(@RequestParam Long studentId,
-                                  @RequestParam Long courseId,
-                                  RedirectAttributes redirectAttrs) {
+    public String unenrollStudent(@RequestParam Long studentId, @RequestParam Long courseId, RedirectAttributes redirectAttrs) {
         User student = userRepo.findById(studentId).orElse(null);
         Course course = courseRepo.findById(courseId).orElse(null);
 
@@ -160,9 +139,7 @@ public class AdminController {
         }
 
         List<StudentCourse> enrollments = studentCourseRepo.findByStudent(student);
-        enrollments.stream()
-                .filter(sc -> sc.getCourse().getId().equals(courseId))
-                .forEach(studentCourseRepo::delete);
+        enrollments.stream().filter(sc -> sc.getCourse().getId().equals(courseId)).forEach(studentCourseRepo::delete);
 
         redirectAttrs.addFlashAttribute("success", "Student unenrolled from course successfully.");
         return "redirect:/admin/dashboard";

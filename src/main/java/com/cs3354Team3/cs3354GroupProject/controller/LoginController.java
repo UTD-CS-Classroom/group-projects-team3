@@ -12,6 +12,7 @@ public class LoginController {
         return "login"; // refers to login.html in /templates
     }
 
+    // After logging in, redirect user to appropriate dashboard page
     @GetMapping("/default")
     public String redirectAfterLogin(Authentication auth) {
         String role = auth.getAuthorities().iterator().next().getAuthority();

@@ -28,6 +28,7 @@ public class TeacherController {
     @Autowired
     private StudentCourseRepository studentCourseRepo;
 
+    // Send teacher details such as email and courses to front-end dashboard
     @GetMapping("/dashboard")
     public String teacherDashboard(Model model, Authentication auth) {
         User teacher = userRepo.findByEmail(auth.getName()).orElseThrow();
@@ -35,12 +36,14 @@ public class TeacherController {
         return "teacher-dashboard";
     }
 
+    // Used for front-end to create a new course
     @GetMapping("/add-course")
     public String addCourseForm(Model model) {
         model.addAttribute("course", new Course());
         return "add-course";
     }
 
+    // Create course and send to database, redirect to teacher dashboard
     @PostMapping("/add-course")
     public String addCourseSubmit(@ModelAttribute Course course, Authentication auth) {
         User teacher = userRepo.findByEmail(auth.getName()).orElseThrow();
@@ -49,11 +52,9 @@ public class TeacherController {
         return "redirect:/teacher/dashboard";
     }
 
+    // Unenroll all students and then delete course
     @PostMapping("/delete-course")
-    public String deleteCourse(@RequestParam Long courseId,
-                               Authentication auth,
-                               RedirectAttributes redirectAttrs) {
-
+    public String deleteCourse(@RequestParam Long courseId, Authentication auth, RedirectAttributes redirectAttrs) {
         User teacher = userRepo.findByEmail(auth.getName()).orElseThrow();
         Course course = courseRepo.findById(courseId).orElse(null);
 
@@ -62,19 +63,19 @@ public class TeacherController {
             return "redirect:/teacher/dashboard";
         }
 
-        // Ensure teacher can only delete their own courses
+        // Check that the course is being taught by correct teacher
         if (!course.getTeacher().getId().equals(teacher.getId())) {
             redirectAttrs.addFlashAttribute("error", "You can only delete your own courses.");
             return "redirect:/teacher/dashboard";
         }
 
-        // Delete student enrollments related to this course
+        // Unenroll students first
         List<StudentCourse> enrollments = studentCourseRepo.findByCourse(course);
         if (!enrollments.isEmpty()) {
             studentCourseRepo.deleteAll(enrollments);
         }
 
-        // Delete the course itself
+        // Delete the course
         courseRepo.delete(course);
 
         redirectAttrs.addFlashAttribute("success", "Course '" + course.getName() + "' was deleted successfully.");
