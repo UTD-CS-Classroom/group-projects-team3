@@ -5,8 +5,6 @@ import lombok.*;
 import java.time.LocalTime;
 import java.util.Set;
 
-// Each course has its own courseID, name, description, credit amount, teacher who teaches the course,
-// and meeting date/time
 @Entity
 @Data
 @NoArgsConstructor
@@ -19,7 +17,9 @@ public class Course {
 
     @Column(nullable = false)
     private String name;
+
     private String description;
+
     private int credits;
 
     @ManyToOne
@@ -32,4 +32,12 @@ public class Course {
 
     private LocalTime startTime;
     private LocalTime endTime;
+
+    // -------- Syllabus fields --------
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String syllabusText;      // long text version of syllabus
+
+    private String syllabusPdfPath;   // file system path to uploaded PDF
 }

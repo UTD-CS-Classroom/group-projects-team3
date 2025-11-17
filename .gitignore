@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Ignore uploaded syllabus PDFs
+syllabi/
+uploads/
+uploads/syllabi/
+
