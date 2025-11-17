@@ -92,13 +92,12 @@
                                     </span>
                         </div>
                         <div style="margin-top: 0.5rem; font-size: 0.875rem; color: #666;">
-                            <span th:text="${c.startTime}"></span> -
-                            <span th:text="${c.endTime}"></span>
+                            <span th:text="${c.startTime}"></span> - <span th:text="${c.endTime}"></span>
                         </div>
                     </td>
                     <td>
                         <form th:action="@{/student/enroll}" method="post">
-                            <input type="hidden" name="courseId" th:value="${c.id}"/>
+                            <input type="hidden" name="courseId" th:value="${c.id}" />
                             <button
                                     type="submit"
                                     class="btn btn-enroll"
@@ -126,26 +125,23 @@
         </div>
 
         <div class="course-cards" id="registeredCourses">
-            <div th:each="sc : ${registrations}" class="course-card"
-                 th:data-course-id="${sc.course.id}">
+            <div th:each="sc : ${registrations}" class="course-card" th:data-course-id="${sc.course.id}">
                 <div class="course-card-header">
                     <div>
                         <div class="course-name" th:text="${sc.course.name}"></div>
-                        <div class="course-teacher"
-                             th:text="${sc.course.teacher.email}"></div>
+                        <div class="course-teacher" th:text="${sc.course.teacher.email}"></div>
                     </div>
                 </div>
 
                 <div class="course-details" th:text="${sc.course.description}"></div>
 
                 <div class="course-meta">
-                    <span class="badge badge-credits"
-                          th:text="${sc.course.credits} + ' Credits'"></span>
+                    <span class="badge badge-credits" th:text="${sc.course.credits} + ' Credits'"></span>
                     <span
                             th:each="day : ${sc.course.daysOfWeek}"
                             class="badge badge-days"
                             th:text="${day}">
-                    </span>
+                        </span>
                 </div>
 
                 <div style="font-size: 0.875rem; color: #666;">
@@ -155,15 +151,8 @@
                 </div>
 
                 <div class="course-actions">
-                    <!-- View Syllabus button -->
-                    <a class="btn btn-secondary"
-                       th:href="@{/student/course/{courseId}/syllabus(courseId=${sc.course.id})}">
-                        View Syllabus
-                    </a>
-
-                    <!-- Drop Course button -->
                     <form th:action="@{/student/unenroll}" method="post" style="flex: 1;">
-                        <input type="hidden" name="courseId" th:value="${sc.course.id}"/>
+                        <input type="hidden" name="courseId" th:value="${sc.course.id}" />
                         <button type="submit" class="btn btn-unenroll" style="width: 100%;">
                             Drop Course
                         </button>
@@ -175,9 +164,7 @@
         <div th:if="${#lists.isEmpty(registrations)}" class="empty-state">
             <div class="empty-state-icon">📚</div>
             <div class="empty-state-text">No courses registered yet</div>
-            <p style="color: #999; font-size: 0.875rem;">
-                Browse available courses above to get started
-            </p>
+            <p style="color: #999; font-size: 0.875rem;">Browse available courses above to get started</p>
         </div>
     </div>
 </div>
