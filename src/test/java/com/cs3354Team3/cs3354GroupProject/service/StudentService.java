@@ -9,6 +9,7 @@ import com.cs3354Team3.cs3354GroupProject.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.util.Collections;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

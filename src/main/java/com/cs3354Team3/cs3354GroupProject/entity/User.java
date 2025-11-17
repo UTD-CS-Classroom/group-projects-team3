@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.util.*;
 
+// Each user has its own ID, email, and password and is either a student, teacher, or sys admin
 @Entity
 @Data
 @NoArgsConstructor
