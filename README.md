@@ -86,7 +86,7 @@ The project used an Agile approach with 1–2 week sprints. Requirements and dia
 Running the Project
 
 1. Clone the Repository:
-git clone https://github.com/<your-repo>/class-registration-system.git
+git clone [https://github.com/<your-repo>/class-registration-system.git](https://github.com/UTD-CS-Classroom/group-projects-team3)
 
 2. Configure MySQL:
 Create database:
